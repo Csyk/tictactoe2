@@ -5,11 +5,12 @@ import time
 
 
 board = [' '] * 10
+# board[0] = "X"
 
 z = 0  # for the 'playersymbol' function
 
 
-def test(i):  # alternates between 'X' and 'O'
+def test(i, screen, dims):  # alternates between 'X' and 'O'
     global z
     if z == 0:
         s = 'X'
@@ -29,39 +30,39 @@ def get_computer_move(screen, dims):
     if i == 7:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i, screen, dims))
     elif i == 8:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i, screen, dims))
     elif i == 9:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i, screen, dims))
     elif i == 4:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i, screen, dims))
     elif i == 5:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i, screen, dims))
     elif i == 6:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i, screen, dims))
     elif i == 1:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i, screen, dims))
     elif i == 2:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i, screen, dims))
     elif i == 3:
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i))
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i, screen, dims))
     return()
 
 
@@ -75,54 +76,61 @@ def rewrite(i):  # to avoid overwriting existing steps
         write = False
 
 
+def tie(screen, dims):
+    check = 0
+    for r in range(0, 10):
+        if board[r] == "X":
+            check += 1
+    return(check > 4)
+
+
 def getPlayerMove(c, screen, dims):
     # prints the players' symbols on the space associated with the num keys
     if c == ord('7'):
         i = 7
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i, screen, dims))
     elif c == ord('8'):
         i = 8
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i, screen, dims))
     elif c == ord('9'):
         i = 9
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i))
+            screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i, screen, dims))
     elif c == ord('4'):
         i = 4
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i, screen, dims))
     elif c == ord('5'):
         i = 5
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i, screen, dims))
     elif c == ord('6'):
         i = 6
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i))
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i, screen, dims))
     elif c == ord('1'):
         i = 1
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i))
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i, screen, dims))
     elif c == ord('2'):
         i = 2
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i))
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i, screen, dims))
     elif c == ord('3'):
         i = 3
         rewrite(i)
         if write:
-            screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i))
-
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i, screen, dims))
     return()
 
 player1 = "X"
@@ -130,6 +138,7 @@ player2 = "O"
 
 
 def winner1():  # returns true if player1 wins
+
     global player1
     global board
     return ((board[7] == player1 and board[8] == player1 and board[9] == player1) or  # horizontal
@@ -179,12 +188,16 @@ def table(screen, name):
     curses.cbreak()
     screen.keypad(True)
     curses.curs_set(0)
+
     while True:
-
-
         if winner1() or winner2():  # if one of the players won
             winning(screen, dims, name)
             screen.refresh()
+            c = screen.getch()
+            if c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+        elif tie(screen, dims):
+            screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), "It's tie!")
             c = screen.getch()
             if c == ord('q'):  # if 'q' pressed the game exits
                 break  # Exit the while loop
