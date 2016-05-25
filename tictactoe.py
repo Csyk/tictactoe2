@@ -180,11 +180,17 @@ def table(screen, name):
     screen.keypad(True)
     curses.curs_set(0)
     while True:
-        if z == 0:
+
+
+        if winner1() or winner2():  # if one of the players won
+            winning(screen, dims, name)
+            screen.refresh()
             c = screen.getch()
             if c == ord('q'):  # if 'q' pressed the game exits
                 break  # Exit the while loop
-            elif winner1() or winner2():  # if one of the players won
+        elif z == 0:
+            c = screen.getch()
+            if winner1() or winner2():  # if one of the players won
                 winning(screen, dims, name)
             elif c == ord('q'):  # if 'q' pressed the game exits
                 break  # Exit the while loop
