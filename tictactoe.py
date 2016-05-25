@@ -1,5 +1,7 @@
 import curses
 import curses.textpad
+import random
+import time
 
 
 board = [' '] * 10
@@ -10,9 +12,9 @@ z = 0  # for the 'playersymbol' function
 def test(i):  # alternates between 'X' and 'O'
     global z
     if z == 0:
-        z += 1
         s = 'X'
         board[i] = s
+        z += 1
         # fills the list of moves with the players' corresponding symbols
         return "X"
     else:
@@ -20,6 +22,47 @@ def test(i):  # alternates between 'X' and 'O'
         board[i] = s
         z -= 1
         return "O"
+
+
+def get_computer_move(screen, dims):
+    i = random.randrange(1, 10)
+    if i == 7:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i))
+    elif i == 8:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i))
+    elif i == 9:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i))
+    elif i == 4:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i))
+    elif i == 5:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i))
+    elif i == 6:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i))
+    elif i == 1:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i))
+    elif i == 2:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i))
+    elif i == 3:
+        rewrite(i)
+        if write:
+            screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i))
+    return()
 
 
 def rewrite(i):  # to avoid overwriting existing steps
@@ -37,65 +80,66 @@ def getPlayerMove(c, screen, dims):
     if c == ord('7'):
         i = 7
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6), int(dims[1]/6), test(i))
     elif c == ord('8'):
         i = 8
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6), int(dims[1]/2), test(i))
     elif c == ord('9'):
         i = 9
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6), int(dims[1]/6*5), test(i))
     elif c == ord('4'):
         i = 4
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*3), int(dims[1]/6), test(i))
     elif c == ord('5'):
         i = 5
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*3), int(dims[1]/2), test(i))
     elif c == ord('6'):
         i = 6
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*3), int(dims[1]/6*5), test(i))
     elif c == ord('1'):
         i = 1
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*5), int(dims[1]/6), test(i))
     elif c == ord('2'):
         i = 2
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*5), int(dims[1]/2), test(i))
     elif c == ord('3'):
         i = 3
         rewrite(i)
-        if write == True:
+        if write:
             screen.addstr(int(dims[0]/6*5), int(dims[1]/6*5), test(i))
+
     return()
 
 player1 = "X"
 player2 = "O"
 
 
-def winner1(): #returns true if player1 wins
+def winner1():  # returns true if player1 wins
     global player1
     global board
     return ((board[7] == player1 and board[8] == player1 and board[9] == player1) or  # horizontal
-    (board[4] == player1 and board[5] == player1 and board[6] == player1) or  # horizontal
-    (board[1] == player1 and board[2] == player1 and board[3] == player1) or  # horizontal
-    (board[7] == player1 and board[4] == player1 and board[1] == player1) or  # vertical
-    (board[8] == player1 and board[5] == player1 and board[2] == player1) or  # vertical
-    (board[9] == player1 and board[6] == player1 and board[3] == player1) or  # vertical
-    (board[7] == player1 and board[5] == player1 and board[3] == player1) or  # diagonal
-    (board[9] == player1 and board[5] == player1 and board[1] == player1))  # diagonal
+            (board[4] == player1 and board[5] == player1 and board[6] == player1) or  # horizontal
+            (board[1] == player1 and board[2] == player1 and board[3] == player1) or  # horizontal
+            (board[7] == player1 and board[4] == player1 and board[1] == player1) or  # vertical
+            (board[8] == player1 and board[5] == player1 and board[2] == player1) or  # vertical
+            (board[9] == player1 and board[6] == player1 and board[3] == player1) or  # vertical
+            (board[7] == player1 and board[5] == player1 and board[3] == player1) or  # diagonal
+            (board[9] == player1 and board[5] == player1 and board[1] == player1))  # diagonal
 
 
 def winner2():  # returns true if player2 wins
@@ -120,6 +164,7 @@ def winning(screen, dims, name):  # whether one of the players won, prints this 
 
 
 def table(screen, name):
+    global z
     dims = screen.getmaxyx()
     screen = curses.newwin(int(dims[0]), int(dims[1]), 0, 0)
     screen.box()
@@ -135,15 +180,21 @@ def table(screen, name):
     screen.keypad(True)
     curses.curs_set(0)
     while True:
-        c = screen.getch()
-        if c == ord('q'):  # if 'q' pressed the game exits
-            break  # Exit the while loop
-        elif winner1() or winner2():  # if one of the players won
-            winning(screen, dims, name)
-        elif c == ord('q'):  # if 'q' pressed the game exits
-            break  # Exit the while loop
-        elif c != ord('q'):  # if 'q' is not pressed the game continues
-            getPlayerMove(c, screen, dims)
+        if z == 0:
+            c = screen.getch()
+            if c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+            elif winner1() or winner2():  # if one of the players won
+                winning(screen, dims, name)
+            elif c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+            elif z == 0:  # if 'q' is not pressed the game continues
+                getPlayerMove(c, screen, dims)
+                screen.refresh()
+        else:
+            get_computer_move(screen, dims)
+            time.sleep(1)
+
     curses.nocbreak()
     screen.keypad(False)
     curses.echo()
