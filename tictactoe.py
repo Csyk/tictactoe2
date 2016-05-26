@@ -258,36 +258,45 @@ def menu(screen, name1, name2, multi_single):
     screen = curses.newwin(int(dims[0]), int(dims[1]), 0, 0)
     screen.box()
     screen.addstr(0, int(dims[1]/2-4), "MENU")
-    screen.addstr(5, 5, 'Welcome ' + name1 + " and " + name2 + ' in this TicTacToe Game!')
-    screen.addstr(10, 3, 'If you need help, press "h" or press "s" to start a game against computer!')
+    screen.addstr(5, 3, 'Welcome ' + name1 + " and " + name2 + ' in this TicTacToe Game!')
+    screen.addstr(10, 3, 'If you need help, press "h" or press "s" to start a game!')
     while True:
         c = screen.getch()
         screen.refresh()
         if c == ord('h'):
-            screen.addstr(15, 5, 'You can navigate the symbols with num keys!')
+            screen.addstr(15, 3, 'You can navigate the symbols with num keys.'
+                          ' Goal is collecting 3 same symbols next to each other.')
         elif c == ord('s'):
-            if multi_single == 1:
+            if multi_single == "1":
                 one_player(screen, name1, name2)
             else:
                 multi_player(screen, name1, name2)
             break
         elif c == ord('q'):  # if 'q' pressed the game exits
             break
+        else:
+            screen.addstr(12, 3, 'Please chose from "h" to help or "s" to start!')
+            screen.refresh()
     curses.endwin()
+    exit()
 
 
 def main():
 
     name1 = input('Type your name! ')
     name2 = "Computer"
-    multi_single = int(input(name1 + " ,if you want to play against computer press 1 or play multi press 2!"))
-    if multi_single == 1:
-        screen = curses.initscr()
-        menu(screen, name1, name2, multi_single)
-    elif multi_single == 2:
-        name2 = input('Type your friend name! ')
-        screen = curses.initscr()
-        menu(screen, name1, name2, multi_single)
+    multi_single = input(name1 + " ,if you want to play against computer press 1 or play multi press 2!")
+    while True:
+        if multi_single == "1":
+            screen = curses.initscr()
+            menu(screen, name1, name2, multi_single)
+        elif multi_single == "2":
+            name2 = input('Type your friend name! ')
+            screen = curses.initscr()
+            menu(screen, name1, name2, multi_single)
+        else:
+            multi_single = input(name1 + " ,if you want to play against computer press 1 or play multi press 2!")
+
 
 
 main()
