@@ -164,15 +164,15 @@ def winner2():  # returns true if player2 wins
             (board[9] == player2 and board[5] == player2 and board[1] == player2))  # diagonal
 
 
-def winning(screen, dims, name):  # whether one of the players won, prints this text
+def winning(screen, dims, name1, name2):  # whether one of the players won, prints this text
     if winner1():
-        screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), name + " won!")  # X
+        screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), name1 + " won!")  # X
     elif winner2():
-        screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), "Computer won!")  # O
+        screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), name2 + " won!")  # O
     return()
 
 
-def table(screen, name):
+def one_player(screen, name1, name2):
     global z
     dims = screen.getmaxyx()
     screen = curses.newwin(int(dims[0]), int(dims[1]), 0, 0)
@@ -191,7 +191,7 @@ def table(screen, name):
 
     while True:
         if winner1() or winner2():  # if one of the players won
-            winning(screen, dims, name)
+            winning(screen, dims, name1, name2)
             screen.refresh()
             c = screen.getch()
             if c == ord('q'):  # if 'q' pressed the game exits
@@ -203,9 +203,7 @@ def table(screen, name):
                 break  # Exit the while loop
         elif z == 0:
             c = screen.getch()
-            if winner1() or winner2():  # if one of the players won
-                winning(screen, dims, name)
-            elif c == ord('q'):  # if 'q' pressed the game exits
+            if c == ord('q'):  # if 'q' pressed the game exits
                 break  # Exit the while loop
             elif z == 0:  # if 'q' is not pressed the game continues
                 getPlayerMove(c, screen, dims)
@@ -213,16 +211,83 @@ def table(screen, name):
         else:
             get_computer_move(screen, dims)
             time.sleep(1)
+    curses.endwin()
 
-    curses.nocbreak()
-    screen.keypad(False)
-    curses.echo()
+
+def multi_player(screen, name1, name2):
+    global z
+    dims = screen.getmaxyx()
+    screen = curses.newwin(int(dims[0]), int(dims[1]), 0, 0)
+    screen.box()
+    for i in range(0, int(dims[0])):
+        screen.addstr(i, int(dims[1]/3), '|')  # vertical
+        screen.addstr(i, int(dims[1]/3*2), '|')
+    for i in range(0, int(dims[1])):
+        screen.addstr(int(dims[0]/3), i, '_')  # horizontal
+        screen.addstr(int(dims[0]/3*2), i, '_')
+    screen.addstr(0, 1, "TIC-TAC-TOE ------ Use number keys to place 'X' and 'O', press 'q' to quit.")
+    curses.noecho()
+    curses.cbreak()
+    screen.keypad(True)
+    curses.curs_set(0)
+
+    while True:
+        if winner1() or winner2():  # if one of the players won
+            winning(screen, dims, name1, name2)
+            screen.refresh()
+            c = screen.getch()
+            if c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+        elif tie(screen, dims):
+            screen.addstr(int(dims[0]/2-2), int(dims[1]/2-7), "It's tie!")
+            c = screen.getch()
+            if c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+        else:
+            c = screen.getch()
+            if c == ord('q'):  # if 'q' pressed the game exits
+                break  # Exit the while loop
+            else:  # if 'q' is not pressed the game continues
+                getPlayerMove(c, screen, dims)
+                screen.refresh()
+    curses.endwin()
+
+
+def menu(screen, name1, name2, multi_single):
+    dims = screen.getmaxyx()
+    screen = curses.newwin(int(dims[0]), int(dims[1]), 0, 0)
+    screen.box()
+    screen.addstr(0, int(dims[1]/2-4), "MENU")
+    screen.addstr(5, 5, 'Welcome ' + name1 + " and " + name2 + ' in this TicTacToe Game!')
+    screen.addstr(10, 3, 'If you need help, press "h" or press "s" to start a game against computer!')
+    while True:
+        c = screen.getch()
+        screen.refresh()
+        if c == ord('h'):
+            screen.addstr(15, 5, 'You can navigate the symbols with num keys!')
+        elif c == ord('s'):
+            if multi_single == 1:
+                one_player(screen, name1, name2)
+            else:
+                multi_player(screen, name1, name2)
+            break
+        elif c == ord('q'):  # if 'q' pressed the game exits
+            break
     curses.endwin()
 
 
 def main():
-    name = input('Type your name! ')
-    screen = curses.initscr()
-    table(screen, name)
+
+    name1 = input('Type your name! ')
+    name2 = "Computer"
+    multi_single = int(input(name1 + " ,if you want to play against computer press 1 or play multi press 2!"))
+    if multi_single == 1:
+        screen = curses.initscr()
+        menu(screen, name1, name2, multi_single)
+    elif multi_single == 2:
+        name2 = input('Type your friend name! ')
+        screen = curses.initscr()
+        menu(screen, name1, name2, multi_single)
+
 
 main()
